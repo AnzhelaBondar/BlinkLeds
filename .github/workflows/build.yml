@@ -1,3 +1,4 @@
+
 name: Compile Arduino Sketch
 
 on:
@@ -21,8 +22,15 @@ jobs:
           arduino-cli core update-index
           arduino-cli core install arduino:avr
 
-      - name: Compile Arduino sketch
+      - name: Compile Arduino Sketch
         run: |
           mkdir -p /tmp/main
           cp examples/main.ino /tmp/main/main.ino
-          arduino-cli compile --fqbn arduino:avr:nano /tmp/main
+          arduino-cli compile --fqbn arduino:avr:nano --output-dir ./build /tmp/main
+
+      - name: Upload HEX artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: arduino-hex
+          path: build/*.hex
+          if-no-files-found: error
